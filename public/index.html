@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Public Distribution System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f0f2ff;}
+    .wrap{display:flex;width:900px;min-height:580px;border-radius:24px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.18);}
+
+    /* ── LEFT ── */
+    .left{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:2.5rem;}
+    .left-bg{position:absolute;inset:0;background:linear-gradient(145deg,#0f0c29 0%,#302b63 50%,#24243e 100%);}
+    .left-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(15,12,41,0.6) 0%,rgba(48,43,99,0.55) 50%,rgba(10,10,30,0.8) 100%);}
+
+    /* Shapes */
+    .shape{position:absolute;pointer-events:none;}
+    .s-ring1{width:200px;height:200px;border:2px solid rgba(255,153,51,0.55);border-radius:50%;top:-50px;right:-50px;animation:spin 20s linear infinite;}
+    .s-ring2{width:120px;height:120px;border:1.5px solid rgba(19,136,8,0.55);border-radius:50%;top:30%;left:-30px;animation:spin 14s linear infinite reverse;}
+    .s-ring3{width:65px;height:65px;border:1.5px solid rgba(255,255,255,0.35);border-radius:50%;top:18%;right:18%;animation:floaty 5s ease-in-out infinite;}
+    .s-orb1{width:150px;height:150px;background:radial-gradient(circle,rgba(255,153,51,0.4),transparent 70%);border-radius:50%;top:-20px;right:20px;animation:pulse 5s ease-in-out infinite;}
+    .s-orb2{width:120px;height:120px;background:radial-gradient(circle,rgba(19,136,8,0.35),transparent 70%);border-radius:50%;bottom:80px;left:-10px;animation:pulse 6s ease-in-out infinite 1.5s;}
+    .s-orb3{width:80px;height:80px;background:radial-gradient(circle,rgba(0,0,128,0.45),transparent 70%);border-radius:50%;top:50%;right:10%;animation:pulse 4s ease-in-out infinite 1s;}
+    .s-sq1{width:38px;height:38px;border:2px solid rgba(255,153,51,0.65);top:20%;left:15%;animation:spin 9s linear infinite,floaty 6s ease-in-out infinite;}
+    .s-sq2{width:22px;height:22px;border:2px solid rgba(19,136,8,0.65);bottom:35%;right:15%;animation:spin 7s linear infinite reverse,floaty 7s ease-in-out infinite 1s;}
+    .s-sq3{width:14px;height:14px;background:rgba(255,153,51,0.45);top:62%;left:30%;animation:spin 11s linear infinite,floaty 5s ease-in-out infinite 2s;}
+    .s-tri1{width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:30px solid rgba(255,255,255,0.2);top:38%;right:25%;animation:floaty 6s ease-in-out infinite 0.5s;}
+    .s-tri2{width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:20px solid rgba(255,153,51,0.3);bottom:28%;left:20%;animation:floaty 8s ease-in-out infinite 1.5s;}
+    .s-dot1{width:8px;height:8px;background:rgba(255,153,51,0.8);border-radius:50%;top:28%;right:35%;animation:floaty 4s ease-in-out infinite;}
+    .s-dot2{width:6px;height:6px;background:rgba(19,136,8,0.8);border-radius:50%;top:55%;left:40%;animation:floaty 5s ease-in-out infinite 1s;}
+    .s-dot3{width:10px;height:10px;background:rgba(255,255,255,0.3);border-radius:50%;bottom:22%;right:30%;animation:floaty 6s ease-in-out infinite 2s;}
+    .s-line1{width:90px;height:1.5px;background:linear-gradient(90deg,transparent,rgba(255,153,51,0.6),transparent);top:15%;left:25%;transform:rotate(-35deg);animation:floaty 7s ease-in-out infinite;}
+    .s-line2{width:65px;height:1.5px;background:linear-gradient(90deg,transparent,rgba(19,136,8,0.6),transparent);bottom:30%;right:22%;transform:rotate(40deg);animation:floaty 5s ease-in-out infinite 2s;}
+    .s-ashoka{width:90px;height:90px;border:2px solid rgba(0,0,128,0.45);border-radius:50%;top:50%;left:50%;margin-left:-45px;margin-top:-45px;animation:spin 30s linear infinite;}
+    .s-ashoka::after{content:'';position:absolute;inset:8px;border:1px solid rgba(0,0,128,0.25);border-radius:50%;}
+
+    @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+    @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}}
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.2);opacity:0.6;}}
+
+    .left-content{position:relative;z-index:3;}
+    .left-heading{color:#fff;font-size:2.4rem;font-weight:800;line-height:1.25;margin-bottom:0.8rem;}
+    .left-heading .orange{color:#ff9933;}
+    .left-heading .green{color:#138808;}
+    .divider-accent{width:48px;height:3px;background:linear-gradient(90deg,#ff9933,#fff,#138808);border-radius:2px;margin-bottom:1.2rem;}
+    .quote{display:flex;align-items:center;gap:10px;}
+    .quote-bar{width:3px;height:36px;background:linear-gradient(180deg,#ff9933,#138808);border-radius:2px;flex-shrink:0;}
+    .quote-text{color:rgba(255,255,255,0.92);font-size:1.2rem;font-weight:600;font-style:italic;letter-spacing:0.5px;}
+
+    /* ── RIGHT ── */
+    .right{width:420px;background:#fff;padding:2.5rem 2.2rem;display:flex;flex-direction:column;justify-content:center;}
+    .right-title{font-size:1.3rem;font-weight:700;color:#1a1a4e;margin-bottom:4px;}
+    .right-sub{font-size:0.78rem;color:#aaa;margin-bottom:1.5rem;}
+    .role-pills{display:flex;background:#f4f4f8;border-radius:12px;padding:4px;gap:4px;margin-bottom:1.5rem;}
+    .pill{flex:1;padding:8px 4px;border:none;background:transparent;border-radius:9px;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;color:#999;cursor:pointer;transition:all 0.25s;text-align:center;}
+    .pill.active{background:#fff;color:#302b63;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    .field{margin-bottom:1rem;}
+    .field label{font-size:0.68rem;font-weight:600;color:#888;display:block;margin-bottom:6px;letter-spacing:0.8px;}
+    .inp-wrap{display:flex;align-items:center;border:1.5px solid #ebebf5;border-radius:11px;padding:0 14px;background:#fafafa;transition:all 0.25s;}
+    .inp-wrap:hover{border-color:#ff9933;background:#fff;}
+    .inp-wrap:focus-within{border-color:#302b63;background:#fff;box-shadow:0 0 0 3px rgba(48,43,99,0.07);}
+    .inp-ico{font-size:13px;margin-right:10px;opacity:0.4;}
+    .inp-wrap input{background:transparent;border:none;outline:none;font-family:'Poppins',sans-serif;font-size:0.82rem;color:#1a1a4e;padding:11px 0;width:100%;}
+    .inp-wrap input::placeholder{color:#ccc;}
+    .sub-row{display:flex;gap:8px;margin-bottom:1.2rem;}
+    .stab{flex:1;padding:7px;border:1.5px solid #ebebf5;background:#fff;border-radius:9px;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;color:#bbb;cursor:pointer;transition:all 0.2s;text-align:center;}
+    .stab.active{border-color:#302b63;color:#302b63;background:#f5f3ff;}
+    .btn{width:100%;padding:13px;background:linear-gradient(135deg,#ff9933,#302b63,#138808);border:none;border-radius:11px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.25s;margin-top:4px;letter-spacing:0.3px;}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(48,43,99,0.3);}
+    .hint{text-align:center;color:#ccc;font-size:0.68rem;margin-top:8px;}
+    .alert-box{padding:10px 14px;border-radius:10px;font-size:0.78rem;margin-bottom:1rem;display:none;}
+    .alert-box.danger{background:#fff0f0;color:#c0392b;border:1px solid #ffd5d5;display:block;}
+    .alert-box.success{background:#f0fff4;color:#1a7a3e;border:1px solid #c3e6cb;display:block;}
+    .panel{display:none;animation:fadeIn 0.3s ease;}
+    .panel.active{display:block;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+
+    @media(max-width:700px){
+      .wrap{flex-direction:column;width:100%;min-height:100vh;border-radius:0;}
+      .left{min-height:220px;padding:2rem;}
+      .right{width:100%;padding:2rem 1.5rem;}
+      .left-heading{font-size:1.8rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- LEFT -->
+    <div class="left">
+      <div class="left-bg"></div>
+      <div class="left-overlay"></div>
+      <div class="shape s-ring1"></div>
+      <div class="shape s-ring2"></div>
+      <div class="shape s-ring3"></div>
+      <div class="shape s-orb1"></div>
+      <div class="shape s-orb2"></div>
+      <div class="shape s-orb3"></div>
+      <div class="shape s-sq1"></div>
+      <div class="shape s-sq2"></div>
+      <div class="shape s-sq3"></div>
+      <div class="shape s-tri1"></div>
+      <div class="shape s-tri2"></div>
+      <div class="shape s-dot1"></div>
+      <div class="shape s-dot2"></div>
+      <div class="shape s-dot3"></div>
+      <div class="shape s-line1"></div>
+      <div class="shape s-line2"></div>
+      <div class="shape s-ashoka"></div>
+      <div class="left-content">
+        <div class="left-heading">
+          <span class="orange">Smart</span> Public<br/>
+          Distribution<br/>
+          <span class="green">System</span>
+        </div>
+        <div class="divider-accent"></div>
+        <div class="quote">
+          <div class="quote-bar"></div>
+          <div class="quote-text">"Jai Jawan, Jai Kisan"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <div class="right-title">Welcome 👋</div>
+      <div class="right-sub">Sign in to your account to continue</div>
+
+      <div class="role-pills">
+        <button class="pill active" onclick="switchRole('admin',this)">🛡️ Admin / Shopkeeper</button>
+        <button class="pill" onclick="switchRole('customer',this)">👤 Customer</button>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="panel active" id="p-admin">
+        <div id="adminAlert" class="alert-box"></div>
+        <div class="field">
+          <label>USERNAME</label>
+          <div class="inp-wrap">
+            <i class="bi bi-person inp-ico"></i>
+            <input type="text" id="adminUsername" placeholder="Enter your username"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>PASSWORD</label>
+          <div class="inp-wrap">
+            <i class="bi bi-lock inp-ico"></i>
+            <input type="password" id="adminPassword" placeholder="Enter your password"/>
+          </div>
+        </div>
+        <button class="btn" onclick="adminLogin()">Sign In →</button>
+        <p class="hint">Default: admin / admin123</p>
+      </div>
+
+      <!-- CUSTOMER -->
+      <div class="panel" id="p-customer">
+        <div class="sub-row">
+          <button class="stab active" onclick="switchSub('login',this)">Sign In</button>
+          <button class="stab" onclick="switchSub('register',this)">Register</button>
+        </div>
+
+        <div class="panel active" id="p-cl">
+          <div id="custLoginAlert" class="alert-box"></div>
+          <div class="field">
+            <label>RATION CARD NUMBER</label>
+            <div class="inp-wrap">
+              <i class="bi bi-credit-card inp-ico"></i>
+              <input type="text" id="custCardNo" placeholder="e.g. RC-001234"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>PASSWORD</label>
+            <div class="inp-wrap">
+              <i class="bi bi-lock inp-ico"></i>
+              <input type="password" id="custPassword" placeholder="Enter your password"/>
+            </div>
+          </div>
+          <button class="btn" onclick="customerLogin()">Sign In →</button>
+        </div>
+
+        <div class="panel" id="p-cr">
+          <div id="custRegAlert" class="alert-box"></div>
+          <div class="field">
+            <label>FULL NAME</label>
+            <div class="inp-wrap">
+              <i class="bi bi-person inp-ico"></i>
+              <input type="text" id="regName" placeholder="Your full name"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>RATION CARD NUMBER</label>
+            <div class="inp-wrap">
+              <i class="bi bi-credit-card inp-ico"></i>
+              <input type="text" id="regCard" placeholder="e.g. RC-001234"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>PHONE</label>
+            <div class="inp-wrap">
+              <i class="bi bi-phone inp-ico"></i>
+              <input type="text" id="regPhone" placeholder="Your phone number"/>
+            </div>
+          </div>
+          <div class="field">
+  <label>FAMILY MEMBERS</label>
+  <div class="inp-wrap">
+    <i class="bi bi-people inp-ico"></i>
+    <input type="number" id="regFamilyMembers" placeholder="Number of family members" min="1"/>
+  </div>
+</div>
+          <div class="field">
+            <label>ADDRESS</label>
+            <div class="inp-wrap">
+              <i class="bi bi-house inp-ico"></i>
+              <input type="text" id="regAddress" placeholder="Your address"/>
+            </div>
+          </div>
+          <div class="field">
+            <label>PASSWORD</label>
+            <div class="inp-wrap">
+              <i class="bi bi-lock inp-ico"></i>
+              <input type="password" id="regPassword" placeholder="Create a password"/>
+            </div>
+          </div>
+          <button class="btn" onclick="customerRegister()">Create Account →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function switchRole(role, btn) {
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('p-admin').classList.toggle('active', role === 'admin');
+      document.getElementById('p-customer').classList.toggle('active', role === 'customer');
+    }
+
+    function switchSub(tab, btn) {
+      document.querySelectorAll('.stab').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('p-cl').classList.toggle('active', tab === 'login');
+      document.getElementById('p-cr').classList.toggle('active', tab === 'register');
+    }
+
+    async function adminLogin() {
+      const username = document.getElementById('adminUsername').value.trim();
+      const password = document.getElementById('adminPassword').value;
+      const alertBox = document.getElementById('adminAlert');
+      if (!username || !password) { showAlert(alertBox, 'danger', 'Please fill in all fields.'); return; }
+      try {
+        const res  = await fetch('/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username, password }) });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = data.role === 'admin' ? '/dashboard.html' : '/issue-ration.html';
+        } else { showAlert(alertBox, 'danger', data.message); }
+      } catch(e) { showAlert(alertBox, 'danger', 'Server error. Try again.'); }
+    }
+
+    async function customerLogin() {
+      const ration_card_no = document.getElementById('custCardNo').value.trim();
+      const password       = document.getElementById('custPassword').value;
+      const alertBox       = document.getElementById('custLoginAlert');
+      if (!ration_card_no || !password) { showAlert(alertBox, 'danger', 'Please fill in all fields.'); return; }
+      try {
+        const res  = await fetch('/customer/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ration_card_no, password }) });
+        const data = await res.json();
+        if (data.success) { window.location.href = '/customer/portal'; }
+        else { showAlert(alertBox, 'danger', data.message); }
+      } catch(e) { showAlert(alertBox, 'danger', 'Server error. Try again.'); }
+    }
+
+    async function customerRegister() {
+  const name           = document.getElementById('regName').value.trim();
+  const ration_card_no = document.getElementById('regCard').value.trim();
+  const phone          = document.getElementById('regPhone').value.trim();
+  const address        = document.getElementById('regAddress').value.trim();
+  const password       = document.getElementById('regPassword').value;
+  const family_members = document.getElementById('regFamilyMembers').value || 1;
+  const alertBox       = document.getElementById('custRegAlert');
+
+  if (!name || !ration_card_no || !password) {
+    showAlert(alertBox, 'danger', 'Name, ration card and password are required.');
+    return;
+  }
+
+  try {
+    const res  = await fetch('/customer/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, ration_card_no, phone, address, password, family_members })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showAlert(alertBox, 'success', '✅ Registered! You can now sign in.');
+      setTimeout(() => switchSub('login', document.querySelector('.stab')), 2000);
+    } else { showAlert(alertBox, 'danger', data.message); }
+  } catch(e) { showAlert(alertBox, 'danger', 'Server error. Try again.'); }
+}
+
+    function showAlert(el, type, msg) {
+      el.className = 'alert-box ' + type;
+      el.textContent = msg;
+      setTimeout(() => { el.className = 'alert-box'; }, 4000);
+    }
+  </script>
+</body>
+</html>

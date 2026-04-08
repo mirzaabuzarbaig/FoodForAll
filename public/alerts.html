@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <title>Alerts — Smart Public Distribution System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f0f2ff;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: linear-gradient(180deg, #0f0c29 0%, #302b63 60%, #24243e 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 0 0.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 1rem;
+    }
+
+    .logo-title {
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .logo-title span.o {
+      color: #ff9933;
+    }
+
+    .logo-title span.g {
+      color: #138808;
+    }
+
+    .logo-sub {
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.62rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(255, 153, 51, 0.25), rgba(19, 136, 8, 0.15));
+      color: #fff;
+      border: 1px solid rgba(255, 153, 51, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .nav-spacer {
+      flex: 1;
+    }
+
+    .nav-user {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.07);
+      margin-top: 0.5rem;
+    }
+
+    .nav-user-name {
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .nav-user-role {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-badge {
+      background: #e53935;
+      color: #fff;
+      font-size: 0.6rem;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: auto;
+      font-weight: 700;
+    }
+
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .topbar-left h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1a1a4e;
+    }
+
+    .topbar-left p {
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    /* Alert sections */
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section-hdr {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a4e;
+    }
+
+    .section-count {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .count-red {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .count-orange {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .count-green {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    /* Alert cards */
+    .alert-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .alert-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 4px 16px rgba(48, 43, 99, 0.07);
+      border-left: 4px solid #eee;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .alert-card.red {
+      border-left-color: #e53935;
+    }
+
+    .alert-card.orange {
+      border-left-color: #ff9933;
+    }
+
+    .alert-ico {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .ico-red {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .ico-orange {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .alert-body {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #1a1a4e;
+      margin-bottom: 4px;
+    }
+
+    .alert-detail {
+      font-size: 0.75rem;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    .alert-detail span {
+      font-weight: 600;
+      color: #555;
+    }
+
+    .alert-time {
+      font-size: 0.65rem;
+      color: #bbb;
+      margin-top: 6px;
+    }
+
+    /* Empty state */
+    .empty {
+      background: #fff;
+      border-radius: 14px;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(48, 43, 99, 0.05);
+    }
+
+    .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.8rem;
+      opacity: 0.3;
+    }
+
+    .empty-text {
+      font-size: 0.82rem;
+      color: #bbb;
+      font-weight: 500;
+    }
+
+    /* Refresh btn */
+    .refresh-btn {
+      padding: 8px 16px;
+      border: 1.5px solid #e0e0f0;
+      border-radius: 10px;
+      background: #fff;
+      color: #302b63;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .refresh-btn:hover {
+      background: #f5f3ff;
+      border-color: #302b63;
+    }
+
+    @media(max-width:900px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-title"><span class="o">Smart</span> Public<br />Distribution <span class="g">System</span></div>
+      <div class="logo-sub">Admin Portal</div>
+    </div>
+    <a href="/dashboard.html" class="nav-item"><i class="bi bi-speedometer2 nav-icon"></i> Dashboard</a>
+    <a href="/admin.html" class="nav-item"><i class="bi bi-box-seam nav-icon"></i> Manage Stock</a>
+    <a href="/issue-ration.html" class="nav-item"><i class="bi bi-bag-check nav-icon"></i> Issue Ration</a>
+    <a href="/alerts.html" class="nav-item active"><i class="bi bi-bell nav-icon"></i> Alerts <span class="nav-badge"
+        id="sidebarAlertCount">0</span></a>
+    <a href="/admin-settings.html" class="nav-item"><i class="bi bi-gear nav-icon"></i> Settings</a>
+    <div class="nav-spacer"></div>
+    <div class="nav-user">
+      <div class="nav-user-name" id="sidebarUser">Admin User</div>
+      <div class="nav-user-role">Administrator</div>
+    </div>
+    <a href="/auth/logout" class="nav-item" style="margin-top:8px;"><i class="bi bi-box-arrow-right nav-icon"></i>
+      Logout</a>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Alerts Center</h1>
+        <p>Monitor low stock and high quantity issues in real time</p>
+      </div>
+      <button class="refresh-btn" onclick="loadAlerts()">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+    </div>
+
+    <!-- LOW STOCK SECTION -->
+    <div class="section">
+      <div class="section-hdr">
+        <i class="bi bi-box-seam" style="font-size:20px;color:#e65100;"></i>
+        <div class="section-title">Low Stock Alerts</div>
+        <span class="section-count count-orange" id="lowStockCount">0 items</span>
+      </div>
+      <div id="lowStockCards">
+        <div class="empty">
+          <div class="empty-icon">📦</div>
+          <div class="empty-text">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HIGH QUANTITY SECTION -->
+    <div class="section">
+      <div class="section-hdr">
+        <i class="bi bi-exclamation-triangle" style="font-size:20px;color:#c62828;"></i>
+        <div class="section-title">High Quantity Alerts</div>
+        <span class="section-count count-red" id="highAlertCount">0 alerts</span>
+      </div>
+      <div id="highAlertCards">
+        <div class="empty">
+          <div class="empty-icon">🚨</div>
+          <div class="empty-text">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suspicious Activity Section -->
+    <div class="section">
+      <div class="section-hdr">
+        <i class="bi bi-shield-exclamation" style="font-size:20px;color:#e53935;"></i>
+        <div class="section-title">Suspicious Activity</div>
+        <span class="section-count count-red" id="fraudAlertCount">0 alerts</span>
+      </div>
+      <div class="section-content">
+        <div id="fraudAlertCards">
+          <div class="empty">
+            <div class="empty-icon">🛡️</div>
+            <div class="empty-text">Analyzing transactions...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Duplicate Collections Section -->
+    <div class="section">
+      <div class="section-hdr">
+        <i class="bi bi-people-fill" style="font-size:20px;color:#6a1b9a;"></i>
+        <div class="section-title">Duplicate Collections</div>
+        <span class="section-count count-blue" id="dupAlertCount">0 alerts</span>
+      </div>
+      <div class="section-content">
+        <div id="dupAlertCards">
+          <div class="empty">
+            <div class="empty-icon">👥</div>
+            <div class="empty-text">Reviewing collections...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      loadAlerts();
+      setInterval(() => { loadLowStock(); loadHighAlerts(); loadFraudAlerts(); loadDupAlerts(); }, 30000);
+    });
+
+    async function checkAuth() {
+      const res = await fetch('/auth/me');
+      const data = await res.json();
+      if (!data.success) { window.location.href = '/'; return; }
+      document.getElementById('sidebarUser').textContent = data.user.name;
+    }
+
+    async function loadAlerts() {
+      await loadLowStock();
+      await loadHighAlerts();
+      await loadFraudAlerts();
+      await loadDupAlerts();
+    }
+
+    async function loadLowStock() {
+      try {
+        const res = await fetch('/stock/alerts');
+        const data = await res.json();
+        const container = document.getElementById('lowStockCards');
+        const countEl = document.getElementById('lowStockCount');
+        countEl.textContent = data.data.length + ' items';
+
+        if (data.data.length === 0) {
+          container.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">✅</div>
+              <div class="empty-text">All stock levels are healthy</div>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = `<div class="alert-cards">${data.data.map(item => {
+          const remaining = (item.total_quantity - item.distributed_quantity).toFixed(1);
+          const percent = ((remaining / item.total_quantity) * 100).toFixed(0);
+          return `
+              <div class="alert-card orange">
+                <div class="alert-ico ico-orange"><i class="bi bi-box-seam"></i></div>
+                <div class="alert-body">
+                  <div class="alert-title">${item.item_name}</div>
+                  <div class="alert-detail">
+                    Remaining: <span>${remaining} ${item.unit}</span> (${percent}% left)<br/>
+                    Alert threshold: <span>${item.alert_threshold} ${item.unit}</span><br/>
+                    Total stock: <span>${item.total_quantity} ${item.unit}</span>
+                  </div>
+                </div>
+              </div>`;
+        }).join('')
+          }</div>`;
+      } catch (err) { console.error('Low stock error:', err); }
+    }
+
+    async function loadHighAlerts() {
+      try {
+        const res = await fetch('/ration/high-alerts');
+        const data = await res.json();
+        const container = document.getElementById('highAlertCards');
+        const countEl = document.getElementById('highAlertCount');
+        const sidebarBadge = document.getElementById('sidebarAlertCount');
+
+        countEl.textContent = data.data.length + ' alerts';
+        sidebarBadge.textContent = data.data.length;
+
+        if (data.data.length === 0) {
+          container.innerHTML = `
+            <div class="empty">
+              <div class="empty-icon">✅</div>
+              <div class="empty-text">No high quantity issues detected</div>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = `<div class="alert-cards">${data.data.map(a => `
+            <div class="alert-card red">
+              <div class="alert-ico ico-red"><i class="bi bi-exclamation-triangle"></i></div>
+              <div class="alert-body">
+                <div class="alert-title">${a.beneficiary_name}</div>
+                <div class="alert-detail">
+                  Item: <span>${a.item_name}</span><br/>
+                  Issued: <span>${a.quantity_issued} ${a.unit}</span> —
+                  Allowed: <span>${a.allowed_qty} ${a.unit}</span><br/>
+                  Ration Card: <span>${a.ration_card_no}</span><br/>
+                  Issued by: <span>${a.issued_by_name}</span>
+                </div>
+                <div class="alert-time">${new Date(a.issued_at).toLocaleString('en-IN')}</div>
+              </div>
+            </div>`).join('')
+          }</div>`;
+      } catch (err) { console.error('High alert error:', err); }
+    }
+    async function loadFraudAlerts() {
+      try {
+        const res = await fetch('/ml/fraud-detect');
+        const data = await res.json();
+        const container = document.getElementById('fraudAlertCards');
+        const countEl = document.getElementById('fraudAlertCount');
+
+        if (data.success) {
+          countEl.textContent = data.data.total_flagged + ' alerts';
+
+          if (data.data.flagged.length === 0) {
+            container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No fraudulent activity detected</div></div>`;
+            return;
+          }
+
+          container.innerHTML = `<div class="alert-cards">${data.data.flagged.slice(0, 5).map(f => `
+          <div class="alert-card red">
+            <div class="alert-ico ico-red"><i class="bi bi-shield-exclamation"></i></div>
+            <div class="alert-body">
+              <div class="alert-title">${f.beneficiary_name}</div>
+              <div class="alert-detail">
+                Item: <span>${f.item_name}</span><br/>
+                Issued: <span>${f.quantity_issued} ${f.unit}</span> —
+                Allowed: <span>${f.allowed_qty} ${f.unit}</span><br/>
+                Card: <span>${f.ration_card_no}</span><br/>
+                <strong>Flags:</strong> ${f.flag_reasons.join(', ')}
+              </div>
+              <div class="alert-time">${new Date(f.issued_at).toLocaleString('en-IN')}</div>
+            </div>
+          </div>`).join('')
+            }</div>`;
+        } else {
+          container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service unavailable</div></div>`;
+        }
+      } catch (err) {
+        console.error('Fraud alert error:', err);
+        document.getElementById('fraudAlertCards').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service not running</div></div>`;
+      }
+    }
+
+    async function loadDupAlerts() {
+      try {
+        const res = await fetch('/ml/duplicate-detect');
+        const data = await res.json();
+        const container = document.getElementById('dupAlertCards');
+        const countEl = document.getElementById('dupAlertCount');
+
+        if (data.success) {
+          countEl.textContent = data.data.total_flagged + ' alerts';
+
+          if (data.data.duplicates.length === 0) {
+            container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No duplicate collections detected</div></div>`;
+            return;
+          }
+
+          container.innerHTML = `<div class="alert-cards">${data.data.duplicates.slice(0, 5).map(d => `
+          <div class="alert-card" style="border-left-color:#6a1b9a;">
+            <div class="alert-ico" style="background:#f3e5f5;color:#6a1b9a;"><i class="bi bi-people"></i></div>
+            <div class="alert-body">
+              <div class="alert-title">Possible Duplicate Collection</div>
+              <div class="alert-detail">
+                <strong>Card 1:</strong> ${d.transaction_1.ration_card_no} (${d.transaction_1.beneficiary_name})<br/>
+                <strong>Card 2:</strong> ${d.transaction_2.ration_card_no} (${d.transaction_2.beneficiary_name})<br/>
+                Item: <span>${d.item_name}</span><br/>
+                Similarity: <span>${Math.round(d.similarity_score * 100)}%</span><br/>
+                <strong>Reasons:</strong> ${d.match_reasons.join(', ')}
+              </div>
+              <div class="alert-time">Risk Level: ${d.risk_level}</div>
+            </div>
+          </div>`).join('')
+            }</div>`;
+        } else {
+          container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service unavailable</div></div>`;
+        }
+      } catch (err) {
+        console.error('Duplicate alert error:', err);
+        document.getElementById('dupAlertCards').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service not running</div></div>`;
+      }
+    }
+  </script>
+
+</body>
+
+</html>

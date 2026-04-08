@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/png" href="/favicon.png"/>
+  <title>Manage Stock — Smart Public Distribution System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Poppins',sans-serif;background:#f0f2ff;display:flex;min-height:100vh;}
+
+    /* ── SIDEBAR ── */
+    .sidebar{width:240px;background:linear-gradient(180deg,#0f0c29 0%,#302b63 60%,#24243e 100%);display:flex;flex-direction:column;padding:1.5rem 1rem;position:fixed;top:0;left:0;height:100vh;z-index:100;}
+    .sidebar-logo{padding:0 0.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:1rem;}
+    .logo-title{color:#fff;font-size:0.95rem;font-weight:700;line-height:1.3;}
+    .logo-title span.o{color:#ff9933;}
+    .logo-title span.g{color:#138808;}
+    .logo-sub{color:rgba(255,255,255,0.35);font-size:0.62rem;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;color:rgba(255,255,255,0.55);font-size:0.8rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;margin-bottom:2px;}
+    .nav-item:hover{background:rgba(255,255,255,0.1);color:#fff;}
+    .nav-item.active{background:linear-gradient(135deg,rgba(255,153,51,0.25),rgba(19,136,8,0.15));color:#fff;border:1px solid rgba(255,153,51,0.2);}
+    .nav-icon{font-size:16px;width:20px;text-align:center;}
+    .nav-spacer{flex:1;}
+    .nav-user{padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.07);margin-top:0.5rem;}
+    .nav-user-name{color:#fff;font-size:0.78rem;font-weight:600;}
+    .nav-user-role{color:rgba(255,255,255,0.4);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.5px;}
+
+    /* ── MAIN ── */
+    .main{margin-left:240px;flex:1;padding:2rem;min-height:100vh;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8rem;}
+    .topbar-left h1{font-size:1.3rem;font-weight:700;color:#1a1a4e;}
+    .topbar-left p{font-size:0.75rem;color:#aaa;margin-top:2px;}
+
+    /* ── ALERT ── */
+    .alert-box{padding:12px 16px;border-radius:10px;font-size:0.78rem;margin-bottom:1.2rem;display:none;align-items:center;gap:8px;font-weight:500;}
+    .alert-box.show-success{display:flex;background:#f0fff4;color:#1a7a3e;border:1px solid #c3e6cb;}
+    .alert-box.show-danger{display:flex;background:#fff0f0;color:#c0392b;border:1px solid #ffd5d5;}
+
+    /* ── LAYOUT ── */
+    .layout{display:grid;grid-template-columns:340px 1fr;gap:20px;}
+
+    /* ── FORM CARD ── */
+    .form-card{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 4px 20px rgba(48,43,99,0.08);}
+    .form-card-title{font-size:0.95rem;font-weight:700;color:#1a1a4e;margin-bottom:1.2rem;display:flex;align-items:center;gap:8px;}
+    .form-card-title i{color:#ff9933;font-size:18px;}
+    .field{margin-bottom:1rem;}
+    .field label{font-size:0.68rem;font-weight:600;color:#888;display:block;margin-bottom:6px;letter-spacing:0.8px;}
+    .inp-wrap{display:flex;align-items:center;border:1.5px solid #ebebf5;border-radius:11px;padding:0 14px;background:#fafafa;transition:all 0.25s;}
+    .inp-wrap:hover{border-color:#ff9933;background:#fff;}
+    .inp-wrap:focus-within{border-color:#302b63;background:#fff;box-shadow:0 0 0 3px rgba(48,43,99,0.07);}
+    .inp-ico{font-size:13px;margin-right:10px;opacity:0.4;color:#302b63;}
+    .inp-wrap input,.inp-wrap select{background:transparent;border:none;outline:none;font-family:'Poppins',sans-serif;font-size:0.82rem;color:#1a1a4e;padding:11px 0;width:100%;}
+    .inp-wrap input::placeholder{color:#ccc;}
+    .field-hint{font-size:0.65rem;color:#aaa;margin-top:4px;}
+    .field-hint.green{color:#138808;}
+    .btn-submit{width:100%;padding:13px;background:linear-gradient(135deg,#ff9933,#302b63,#138808);border:none;border-radius:11px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.25s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .btn-submit:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(48,43,99,0.3);}
+
+    /* ── STOCK TABLE CARD ── */
+    .table-card{background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 4px 20px rgba(48,43,99,0.07);}
+    .table-card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;}
+    .table-card-title{font-size:0.95rem;font-weight:700;color:#1a1a4e;display:flex;align-items:center;gap:8px;}
+    .table-card-title i{color:#ff9933;}
+    .badge{font-size:0.65rem;padding:4px 10px;border-radius:20px;font-weight:600;}
+    .badge-green{background:#e8f5e9;color:#2e7d32;}
+    .badge-orange{background:#fff3e0;color:#e65100;}
+    .badge-red{background:#ffebee;color:#c62828;}
+    .badge-blue{background:#e3f2fd;color:#1565c0;}
+    table{width:100%;border-collapse:collapse;font-size:0.78rem;}
+    thead th{color:#bbb;font-weight:600;text-align:left;padding:0 0 10px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #f0f0f8;}
+    tbody td{padding:12px 0;border-bottom:1px solid #f8f8fc;color:#555;vertical-align:middle;}
+    tbody td:first-child{font-weight:600;color:#1a1a4e;}
+    tbody tr:last-child td{border-bottom:none;}
+    .prog{height:4px;background:#f0f0f8;border-radius:2px;margin-top:4px;}
+    .prog-bar{height:4px;border-radius:2px;}
+    .add-more{display:flex;gap:6px;align-items:center;}
+    .add-more input{border:1.5px solid #ebebf5;border-radius:8px;padding:6px 10px;font-family:'Poppins',sans-serif;font-size:0.75rem;color:#1a1a4e;width:80px;outline:none;background:#fafafa;}
+    .add-more input:focus{border-color:#302b63;}
+    .add-more-btn{padding:7px 12px;background:linear-gradient(135deg,#302b63,#7c3aed);border:none;border-radius:8px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .add-more-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(48,43,99,0.3);}
+    .reset-btn{padding:6px 10px;background:linear-gradient(135deg,#ff9933,#e65100);border:none;border-radius:8px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.68rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .reset-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(230,81,0,0.3);}
+.delete-btn{padding:6px 10px;background:linear-gradient(135deg,#c62828,#e53935);border:none;border-radius:8px;color:#fff;font-family:'Poppins',sans-serif;font-size:0.68rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.delete-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(198,40,40,0.3);}
+    @media(max-width:900px){
+      .sidebar{display:none;}
+      .main{margin-left:0;}
+      .layout{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-title"><span class="o">Smart</span> Public<br/>Distribution <span class="g">System</span></div>
+      <div class="logo-sub">Admin Portal</div>
+    </div>
+    <a href="/dashboard.html"    class="nav-item"><i class="bi bi-speedometer2 nav-icon"></i> Dashboard</a>
+    <a href="/admin.html"        class="nav-item active"><i class="bi bi-box-seam nav-icon"></i> Manage Stock</a>
+    <a href="/issue-ration.html" class="nav-item"><i class="bi bi-bag-check nav-icon"></i> Issue Ration</a>
+
+    <a href="/admin-settings.html" class="nav-item"><i class="bi bi-gear nav-icon"></i> Settings</a>
+    
+    <div class="nav-spacer"></div>
+    <div class="nav-user">
+      <div class="nav-user-name" id="sidebarUser">Admin User</div>
+      <div class="nav-user-role">Administrator</div>
+    </div>
+    <a href="/auth/logout" class="nav-item" style="margin-top:8px;"><i class="bi bi-box-arrow-right nav-icon"></i> Logout</a>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Manage Stock</h1>
+        <p>Add new items or update existing stock quantities</p>
+      </div>
+    </div>
+
+    <div id="alertBox" class="alert-box"></div>
+
+    <div class="layout">
+
+      <!-- ADD STOCK FORM -->
+      <div class="form-card">
+        <div class="form-card-title">
+          <i class="bi bi-plus-circle-fill"></i> Add New Stock Item
+        </div>
+
+        <div class="field">
+          <label>ITEM NAME</label>
+          <div class="inp-wrap">
+            <i class="bi bi-box-seam inp-ico"></i>
+            <input type="text" id="itemName" placeholder="e.g. Rice, Wheat, Sugar"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>TOTAL QUANTITY</label>
+          <div class="inp-wrap">
+            <i class="bi bi-123 inp-ico"></i>
+            <input type="number" id="totalQty" placeholder="e.g. 500"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>UNIT</label>
+          <div class="inp-wrap">
+            <i class="bi bi-rulers inp-ico"></i>
+            <select id="unit">
+              <option value="kg">kg</option>
+              <option value="litre">litre</option>
+              <option value="packet">packet</option>
+              <option value="bag">bag</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>ALERT THRESHOLD</label>
+          <div class="inp-wrap">
+            <i class="bi bi-bell inp-ico"></i>
+            <input type="number" id="alertThreshold" placeholder="e.g. 50"/>
+          </div>
+          <div class="field-hint">System alerts when remaining stock falls below this value</div>
+        </div>
+
+        <div class="field">
+          <label>PER PERSON QUOTA (PER CYCLE)</label>
+          <div class="inp-wrap">
+            <i class="bi bi-person-check inp-ico"></i>
+            <input type="number" id="perPersonQuota" placeholder="e.g. 5"/>
+          </div>
+          <div class="field-hint green">Each family member gets this amount per cycle. Leave 0 for no limit.</div>
+        </div>
+
+        <button class="btn-submit" onclick="addStock()">
+          <i class="bi bi-plus-lg"></i> Add Stock Item
+        </button>
+      </div>
+
+      <!-- STOCK TABLE -->
+      <div class="table-card">
+        <div class="table-card-hdr">
+          <div class="table-card-title">
+            <i class="bi bi-list-ul"></i> Current Stock Inventory
+          </div>
+          <span class="badge badge-blue" id="stockCount">0 items</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Total</th>
+              <th>Distributed</th>
+              <th>Remaining</th>
+              <th>Quota/Person</th>
+              <th>Status</th>
+              <th>Add More</th>
+              <th>Reset Cycle</th>
+<th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody">
+            <tr><td colspan="8" style="text-align:center;color:#bbb;padding:2rem 0;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/stock.js"></script>
+  <script>
+    async function checkAuth() {
+      const res  = await fetch('/auth/me');
+      const data = await res.json();
+      if (!data.success) { window.location.href = '/'; return; }
+      const el = document.getElementById('sidebarUser');
+      if (el) el.textContent = data.user.name;
+    }
+    checkAuth();
+  </script>
+</body>
+</html>
