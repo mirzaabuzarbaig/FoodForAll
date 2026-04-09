@@ -1,13 +1,31 @@
+// Auto-start Python ML service
+const { spawn } = require('child_process');
+const mlProcess = spawn('python', ['-m', 'ml.ml_service'], {
+  cwd: __dirname,
+  stdio: 'inherit'
+});
+
+mlProcess.on('error', (err) => {
+  console.log('ML service could not start:', err.message);
+});
+
+mlProcess.on('close', (code) => {
+  console.log('ML service stopped with code:', code);
+});
+
+process.on('exit', () => {
+  mlProcess.kill();
+});
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
 require('dotenv').config();
 
-const authRoutes      = require('./routes/auth');
-const stockRoutes     = require('./routes/stock');
-const rationRoutes    = require('./routes/ration');
+const authRoutes = require('./routes/auth');
+const stockRoutes = require('./routes/stock');
+const rationRoutes = require('./routes/ration');
 const dashboardRoutes = require('./routes/dashboard');
-const customerRoutes  = require('./routes/customer');
+const customerRoutes = require('./routes/customer');
 
 const app = express();
 
@@ -25,17 +43,17 @@ app.use(session({
 }));
 
 // Routes
-app.use('/auth',      authRoutes);
-app.use('/stock',     stockRoutes);
-app.use('/ration',    rationRoutes);
+app.use('/auth', authRoutes);
+app.use('/stock', stockRoutes);
+app.use('/ration', rationRoutes);
 app.use('/dashboard', dashboardRoutes);
-app.use('/customer',  customerRoutes);
+app.use('/customer', customerRoutes);
 
 // Root route - serve main login page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
- 
+
 // Also add ML routes (move this line up)
 const mlRoutes = require('./routes/mlRoutes');
 app.use('/ml', mlRoutes);
