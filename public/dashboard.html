@@ -50,8 +50,13 @@
       line-height: 1.3;
     }
 
-    .logo-title span.o { color: #ff9933; }
-    .logo-title span.g { color: #138808; }
+    .logo-title span.o {
+      color: #ff9933;
+    }
+
+    .logo-title span.g {
+      color: #138808;
+    }
 
     .logo-sub {
       color: rgba(255, 255, 255, 0.35);
@@ -93,7 +98,9 @@
       text-align: center;
     }
 
-    .nav-spacer { flex: 1; }
+    .nav-spacer {
+      flex: 1;
+    }
 
     .nav-user {
       padding: 12px 14px;
@@ -187,7 +194,9 @@
       gap: 10px;
     }
 
-    .alert-banner.show { display: flex; }
+    .alert-banner.show {
+      display: flex;
+    }
 
     /* ── STAT CARDS ── */
     .stats {
@@ -208,7 +217,9 @@
       transition: transform 0.2s;
     }
 
-    .stat-card:hover { transform: translateY(-3px); }
+    .stat-card:hover {
+      transform: translateY(-3px);
+    }
 
     .stat-ico {
       width: 52px;
@@ -221,9 +232,17 @@
       flex-shrink: 0;
     }
 
-    .ico-green  { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
-    .ico-blue   { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
-    .ico-orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); }
+    .ico-green {
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    }
+
+    .ico-blue {
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    }
+
+    .ico-orange {
+      background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    }
 
     .stat-label {
       font-size: 0.7rem;
@@ -283,7 +302,9 @@
       gap: 8px;
     }
 
-    .card-title i { color: #ff9933; }
+    .card-title i {
+      color: #ff9933;
+    }
 
     .badge {
       font-size: 0.65rem;
@@ -292,9 +313,20 @@
       font-weight: 600;
     }
 
-    .badge-green  { background: #e8f5e9; color: #2e7d32; }
-    .badge-orange { background: #fff3e0; color: #e65100; }
-    .badge-red    { background: #ffebee; color: #c62828; }
+    .badge-green {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .badge-orange {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .badge-red {
+      background: #ffebee;
+      color: #c62828;
+    }
 
     /* ── DEMAND CARDS ── */
     .demand-grid {
@@ -324,16 +356,26 @@
       margin-bottom: 3px;
     }
 
-    .demand-forecast strong { color: #302b63; }
+    .demand-forecast strong {
+      color: #302b63;
+    }
 
     .demand-trend {
       font-size: 0.68rem;
       color: #888;
     }
 
-    .demand-trend.up   { color: #c62828; }
-    .demand-trend.down { color: #2e7d32; }
-    .demand-trend.stable { color: #e65100; }
+    .demand-trend.up {
+      color: #c62828;
+    }
+
+    .demand-trend.down {
+      color: #2e7d32;
+    }
+
+    .demand-trend.stable {
+      color: #e65100;
+    }
 
     /* ── ANOMALY ── */
     .anomaly-ok {
@@ -394,7 +436,8 @@
     }
 
     /* ── LOADING / EMPTY ── */
-    .loading-message, .empty-state {
+    .loading-message,
+    .empty-state {
       text-align: center;
       padding: 1.5rem 0;
       color: #bbb;
@@ -437,7 +480,9 @@
       color: #1a1a4e;
     }
 
-    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
 
     .prog {
       height: 4px;
@@ -453,11 +498,25 @@
     }
 
     @media(max-width:900px) {
-      .sidebar  { display: none; }
-      .main     { margin-left: 0; }
-      .stats    { grid-template-columns: 1fr 1fr; }
-      .ml-row   { grid-template-columns: 1fr; }
-      .row2     { grid-template-columns: 1fr; }
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ml-row {
+        grid-template-columns: 1fr;
+      }
+
+      .row2 {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -480,7 +539,8 @@
       <div class="nav-user-name" id="sidebarUser">Admin User</div>
       <div class="nav-user-role">Administrator</div>
     </div>
-    <a href="/auth/logout" class="nav-item" style="margin-top:8px;"><i class="bi bi-box-arrow-right nav-icon"></i> Logout</a>
+    <a href="/auth/logout" class="nav-item" style="margin-top:8px;"><i class="bi bi-box-arrow-right nav-icon"></i>
+      Logout</a>
   </div>
 
   <!-- MAIN -->
