@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
-  <title>My Alerts — Smart Public Distribution System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alerts — Smart Public Distribution System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
@@ -18,18 +18,17 @@
     .nav-brand-name span.o{color:#ff9933;}
     .nav-brand-name span.g{color:#138808;}
     .nav-brand-sub{color:rgba(255,255,255,0.35);font-size:0.6rem;letter-spacing:1px;text-transform:uppercase;}
-    .nav-right{display:flex;align-items:center;gap:10px;}
+    .nav-right{display:flex;align-items:center;gap:12px;}
     .nav-user-pill{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:6px 14px;color:#fff;font-size:0.75rem;font-weight:500;display:flex;align-items:center;gap:6px;}
-    .nav-btn{padding:7px 16px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:500;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px;transition:all 0.2s;}
-    .nav-btn-outline{border:1.5px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.8);background:transparent;}
-    .nav-btn-outline:hover{background:rgba(255,255,255,0.1);color:#fff;}
-    .nav-btn-active{border:1.5px solid rgba(255,153,51,0.5);color:#ff9933;background:rgba(255,153,51,0.1);}
+    .nav-btn{padding:7px 16px;border:1.5px solid rgba(255,255,255,0.3);border-radius:10px;color:rgba(255,255,255,0.8);font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:500;cursor:pointer;background:transparent;transition:all 0.2s;text-decoration:none;display:flex;align-items:center;gap:6px;}
+    .nav-btn:hover{background:rgba(255,255,255,0.1);color:#fff;}
+    .nav-btn.active{border-color:rgba(255,153,51,0.5);color:#ff9933;}
 
     /* ── PAGE ── */
-    .page{padding:2rem;max-width:1100px;margin:0 auto;}
+    .page{padding:2rem;}
     .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8rem;}
-    .topbar h1{font-size:1.3rem;font-weight:700;color:#1a1a4e;}
-    .topbar p{font-size:0.75rem;color:#aaa;margin-top:2px;}
+    .topbar-left h1{font-size:1.3rem;font-weight:700;color:#1a1a4e;}
+    .topbar-left p{font-size:0.75rem;color:#aaa;margin-top:2px;}
     .refresh-btn{padding:8px 16px;border:1.5px solid #e0e0f0;border-radius:10px;background:#fff;color:#302b63;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
     .refresh-btn:hover{background:#f5f3ff;border-color:#302b63;}
 
@@ -40,44 +39,46 @@
     .section-count{font-size:0.7rem;padding:4px 10px;border-radius:20px;font-weight:600;}
     .count-red{background:#ffebee;color:#c62828;}
     .count-orange{background:#fff3e0;color:#e65100;}
-    .count-green{background:#e8f5e9;color:#2e7d32;}
-    .count-blue{background:#e3f2fd;color:#1565c0;}
+    .count-purple{background:#f3e5f5;color:#6a1b9a;}
+    .count-teal{background:#e0f2f1;color:#00695c;}
 
     /* ── ALERT CARDS ── */
-    .alert-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
-    .alert-card{background:#fff;border-radius:14px;padding:1.2rem 1.4rem;box-shadow:0 4px 16px rgba(48,43,99,0.07);border-left:4px solid #eee;display:flex;align-items:flex-start;gap:14px;transition:transform 0.2s;}
-    .alert-card:hover{transform:translateY(-2px);}
+    .alert-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+    .alert-card{background:#fff;border-radius:14px;padding:1.2rem 1.4rem;box-shadow:0 4px 16px rgba(48,43,99,0.07);border-left:4px solid #eee;display:flex;align-items:flex-start;gap:14px;}
+    .alert-card.red{border-left-color:#e53935;}
     .alert-card.orange{border-left-color:#ff9933;}
-    .alert-card.blue{border-left-color:#1565c0;}
-    .alert-card.green{border-left-color:#138808;}
+    .alert-card.purple{border-left-color:#6a1b9a;}
     .alert-ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+    .ico-red{background:#ffebee;color:#c62828;}
     .ico-orange{background:#fff3e0;color:#e65100;}
-    .ico-blue{background:#e3f2fd;color:#1565c0;}
-    .ico-green{background:#e8f5e9;color:#2e7d32;}
+    .ico-purple{background:#f3e5f5;color:#6a1b9a;}
+    .alert-body{flex:1;}
     .alert-title{font-size:0.85rem;font-weight:700;color:#1a1a4e;margin-bottom:4px;}
-    .alert-detail{font-size:0.75rem;color:#888;line-height:1.7;}
+    .alert-detail{font-size:0.75rem;color:#888;line-height:1.6;}
     .alert-detail span{font-weight:600;color:#555;}
     .alert-time{font-size:0.65rem;color:#bbb;margin-top:6px;}
 
-    /* ── MY QUOTA CARDS ── */
-    .quota-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
-    .quota-card{background:#fff;border-radius:14px;padding:1.3rem 1.4rem;box-shadow:0 4px 16px rgba(48,43,99,0.07);transition:transform 0.2s;}
-    .quota-card:hover{transform:translateY(-2px);}
-    .quota-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;}
-    .quota-item{font-size:0.88rem;font-weight:700;color:#1a1a4e;}
-    .quota-badge{font-size:0.65rem;padding:4px 10px;border-radius:20px;font-weight:600;}
-    .quota-row{display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;}
-    .quota-row span:first-child{color:#aaa;}
-    .quota-row span:last-child{font-weight:600;color:#555;}
-    .quota-prog-wrap{margin-top:10px;}
-    .quota-prog-label{display:flex;justify-content:space-between;font-size:0.68rem;color:#aaa;margin-bottom:4px;}
-    .quota-prog{height:6px;background:#f0f0f8;border-radius:3px;}
-    .quota-prog-bar{height:6px;border-radius:3px;transition:width 0.5s;}
+    /* ── ANOMALY SUMMARY CARD ── */
+    .anomaly-summary{background:#fff;border-radius:14px;padding:1.4rem 1.6rem;box-shadow:0 4px 16px rgba(48,43,99,0.07);display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+    .anomaly-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+    .anomaly-icon-wrap.ok{background:#e8f5e9;color:#2e7d32;}
+    .anomaly-icon-wrap.warn{background:#ffebee;color:#c62828;}
+    .anomaly-info{flex:1;min-width:200px;}
+    .anomaly-info h3{font-size:0.9rem;font-weight:700;color:#1a1a4e;margin-bottom:4px;}
+    .anomaly-info p{font-size:0.75rem;color:#888;line-height:1.5;}
+    .anomaly-stats{display:flex;gap:20px;margin-top:10px;}
+    .anomaly-stat{text-align:center;}
+    .anomaly-stat-val{font-size:1.4rem;font-weight:700;color:#1a1a4e;}
+    .anomaly-stat-val.danger{color:#e53935;}
+    .anomaly-stat-val.safe{color:#2e7d32;}
+    .anomaly-stat-label{font-size:0.62rem;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;}
 
     /* ── EMPTY ── */
     .empty{background:#fff;border-radius:14px;padding:2.5rem;text-align:center;box-shadow:0 4px 16px rgba(48,43,99,0.05);}
     .empty-icon{font-size:2.5rem;margin-bottom:0.8rem;opacity:0.3;}
     .empty-text{font-size:0.82rem;color:#bbb;font-weight:500;}
+
+    @media(max-width:900px){.page{padding:1rem;}.anomaly-summary{flex-direction:column;align-items:flex-start;}}
   </style>
 </head>
 <body>
@@ -90,37 +91,37 @@
     </div>
     <div class="nav-right">
       <div class="nav-user-pill"><i class="bi bi-person-circle"></i><span id="navUserName">Customer</span></div>
-      <a href="/customer/portal" class="nav-btn nav-btn-outline"><i class="bi bi-house"></i> My Portal</a>
-      <a href="/customer-alerts.html" class="nav-btn nav-btn-active"><i class="bi bi-bell"></i> Alerts</a>
-      <a href="/customer-settings.html" class="nav-btn nav-btn-outline"><i class="bi bi-gear"></i> Settings</a>
-      <a href="/customer/logout" class="nav-btn nav-btn-outline"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      <a href="/customer/portal" class="nav-btn"><i class="bi bi-house"></i> Dashboard</a>
+      <a href="/customer-alerts.html" class="nav-btn active"><i class="bi bi-bell"></i> Alerts</a>
+      <a href="/customer-settings.html" class="nav-btn"><i class="bi bi-gear"></i> Settings</a>
+      <a href="/customer/logout" class="nav-btn"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>
   </div>
 
   <div class="page">
     <div class="topbar">
-      <div>
-        <h1>My Alerts</h1>
-        <p>Track your quota usage and stock availability</p>
+      <div class="topbar-left">
+        <h1>Alerts Center</h1>
+        <p>Monitor low stock and suspicious activity in real time</p>
       </div>
-      <button class="refresh-btn" onclick="loadAll()">
+      <button class="refresh-btn" onclick="loadAlerts()">
         <i class="bi bi-arrow-clockwise"></i> Refresh
       </button>
     </div>
 
-    <!-- MY QUOTA USAGE -->
+    <!-- ── ANOMALY DETECTION SUMMARY ── -->
     <div class="section">
       <div class="section-hdr">
-        <i class="bi bi-person-check" style="font-size:20px;color:#302b63;"></i>
-        <div class="section-title">My Quota Usage</div>
-        <span class="section-count count-blue" id="quotaCount">0 items</span>
+        <i class="bi bi-cpu" style="font-size:20px;color:#00897b;"></i>
+        <div class="section-title">Anomaly Detection</div>
+        <span class="section-count count-teal" id="anomalyCount">Checking...</span>
       </div>
-      <div id="quotaCards">
-        <div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Loading...</div></div>
+      <div id="anomalySummaryCard">
+        <div class="empty"><div class="empty-icon">🤖</div><div class="empty-text">Running analysis...</div></div>
       </div>
     </div>
 
-    <!-- LOW STOCK ALERTS -->
+    <!-- ── LOW STOCK ── -->
     <div class="section">
       <div class="section-hdr">
         <i class="bi bi-box-seam" style="font-size:20px;color:#e65100;"></i>
@@ -132,157 +133,269 @@
       </div>
     </div>
 
-    <!-- MY RECENT TRANSACTIONS -->
+    <!-- ── HIGH QUANTITY ── -->
     <div class="section">
       <div class="section-hdr">
-        <i class="bi bi-clock-history" style="font-size:20px;color:#138808;"></i>
-        <div class="section-title">My Recent Transactions</div>
-        <span class="section-count count-green" id="txCount">0 transactions</span>
+        <i class="bi bi-exclamation-triangle" style="font-size:20px;color:#c62828;"></i>
+        <div class="section-title">High Quantity Alerts</div>
+        <span class="section-count count-red" id="highAlertCount">0 alerts</span>
       </div>
-      <div id="txCards">
-        <div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">Loading...</div></div>
+      <div id="highAlertCards">
+        <div class="empty"><div class="empty-icon">🚨</div><div class="empty-text">Loading...</div></div>
       </div>
     </div>
 
+    <!-- ── SUSPICIOUS ACTIVITY ── -->
+    <div class="section">
+      <div class="section-hdr">
+        <i class="bi bi-shield-exclamation" style="font-size:20px;color:#e53935;"></i>
+        <div class="section-title">Suspicious Activity</div>
+        <span class="section-count count-red" id="fraudAlertCount">0 alerts</span>
+      </div>
+      <div id="fraudAlertCards">
+        <div class="empty"><div class="empty-icon">🛡️</div><div class="empty-text">Analyzing transactions...</div></div>
+      </div>
+    </div>
+
+    <!-- ── DUPLICATE COLLECTIONS ── -->
+    <div class="section">
+      <div class="section-hdr">
+        <i class="bi bi-people-fill" style="font-size:20px;color:#6a1b9a;"></i>
+        <div class="section-title">Duplicate Collections</div>
+        <span class="section-count count-purple" id="dupAlertCount">0 alerts</span>
+      </div>
+      <div id="dupAlertCards">
+        <div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Reviewing collections...</div></div>
+      </div>
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       checkAuth();
-      loadAll();
-      setInterval(loadAll, 30000);
+      loadAlerts();
+      setInterval(loadAlerts, 30000);
     });
 
     async function checkAuth() {
       try {
-        const res  = await fetch('/customer/me');
+        const res = await fetch('/customer/me', { credentials: 'include' });
+        if (res.status === 401 || res.status === 403) { window.location.href = '/'; return; }
+        if (!res.ok) { console.warn('Auth check status:', res.status); return; }
         const data = await res.json();
-        if (!data.success) { window.location.href = '/'; return; }
-        document.getElementById('navUserName').textContent = data.customer.name;
-      } catch (err) { window.location.href = '/'; }
-    }
-
-    async function loadAll() {
-      await loadQuota();
-      await loadLowStock();
-      await loadMyTransactions();
-    }
-
-    async function loadQuota() {
-      try {
-        const stockRes = await fetch('/customer/available-stock');
-        const txRes    = await fetch('/customer/my-transactions');
-        const stockData = await stockRes.json();
-        const txData    = await txRes.json();
-
-        const container = document.getElementById('quotaCards');
-        const countEl   = document.getElementById('quotaCount');
-
-        const itemsWithQuota = stockData.data.filter(i => i.per_person_quota > 0);
-        countEl.textContent  = itemsWithQuota.length + ' items';
-
-        if (itemsWithQuota.length === 0) {
-          container.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">No quota set for any items yet</div></div>`;
-          return;
+        if (data.success === false) { window.location.href = '/'; return; }
+        if (data.user && data.user.name) {
+          document.getElementById('navUserName').textContent = data.user.name;
         }
-
-        container.innerHTML = `<div class="quota-cards">${
-          itemsWithQuota.map(item => {
-            // Find total issued for this item from my transactions
-            const myTx = txData.data.filter(t => t.item_name === item.item_name);
-            const totalIssued = myTx.reduce((sum, t) => sum + parseFloat(t.quantity_issued), 0);
-            const remaining   = item.total_quantity - item.distributed_quantity;
-            const percent     = item.per_person_quota > 0
-              ? Math.min((totalIssued / (item.per_person_quota * 4)) * 100, 100).toFixed(0)
-              : 0;
-            let barColor  = '#66bb6a';
-            let badgeCls  = 'count-green';
-            let badgeTxt  = 'Available';
-            if (percent >= 100) { barColor = '#ef5350'; badgeCls = 'count-red';    badgeTxt = 'Fully Used'; }
-            else if (percent > 50) { barColor = '#ffa726'; badgeCls = 'count-orange'; badgeTxt = 'Partially Used'; }
-
-            return `
-              <div class="quota-card">
-                <div class="quota-hdr">
-                  <div class="quota-item">${item.item_name}</div>
-                  <span class="quota-badge ${badgeCls}">${badgeTxt}</span>
-                </div>
-                <div class="quota-row"><span>Per person quota</span><span>${item.per_person_quota} ${item.unit}</span></div>
-                <div class="quota-row"><span>You have received</span><span>${totalIssued.toFixed(1)} ${item.unit}</span></div>
-                <div class="quota-row"><span>Stock available</span><span>${remaining.toFixed(1)} ${item.unit}</span></div>
-                <div class="quota-prog-wrap">
-                  <div class="quota-prog-label"><span>Usage</span><span>${percent}%</span></div>
-                  <div class="quota-prog"><div class="quota-prog-bar" style="width:${percent}%;background:${barColor};"></div></div>
-                </div>
-              </div>`;
-          }).join('')
-        }</div>`;
-      } catch (err) { console.error('Quota error:', err); }
+      } catch (err) {
+        console.warn('Auth check network error (ignored):', err);
+      }
     }
 
+    async function loadAlerts() {
+      await Promise.all([
+        loadAnomalySummary(),
+        loadLowStock(),
+        loadHighAlerts(),
+        loadFraudAlerts(),
+        loadDupAlerts()
+      ]);
+    }
+
+    // ── ANOMALY DETECTION SUMMARY ────────────────────────────────
+    async function loadAnomalySummary() {
+      const card    = document.getElementById('anomalySummaryCard');
+      const countEl = document.getElementById('anomalyCount');
+      try {
+        const [fraudRes, dupRes] = await Promise.all([
+          fetch('/ml/fraud-detect',      { credentials: 'include' }),
+          fetch('/ml/duplicate-detect',  { credentials: 'include' })
+        ]);
+        const fraud = await fraudRes.json();
+        const dup   = await dupRes.json();
+
+        const fraudCount = fraud.success ? (fraud.data.total_flagged || 0) : 0;
+        const dupCount   = dup.success   ? (dup.data.total_flagged   || 0) : 0;
+        const total      = fraudCount + dupCount;
+
+        countEl.textContent       = total + ' detected';
+        countEl.style.background  = total > 0 ? '#ffebee' : '#e8f5e9';
+        countEl.style.color       = total > 0 ? '#c62828' : '#2e7d32';
+
+        if (total > 0) {
+          card.innerHTML = `
+            <div class="anomaly-summary">
+              <div class="anomaly-icon-wrap warn"><i class="bi bi-exclamation-triangle-fill"></i></div>
+              <div class="anomaly-info">
+                <h3>⚠ Suspicious Activity Detected by ML Model</h3>
+                <p>Our machine learning system has flagged ${total} anomalous ${total === 1 ? 'transaction' : 'transactions'} in the distribution network. See the sections below for full details.</p>
+                <div class="anomaly-stats">
+                  <div class="anomaly-stat">
+                    <div class="anomaly-stat-val danger">${fraudCount}</div>
+                    <div class="anomaly-stat-label">Fraud Flags</div>
+                  </div>
+                  <div class="anomaly-stat">
+                    <div class="anomaly-stat-val danger">${dupCount}</div>
+                    <div class="anomaly-stat-label">Duplicates</div>
+                  </div>
+                  <div class="anomaly-stat">
+                    <div class="anomaly-stat-val danger">${total}</div>
+                    <div class="anomaly-stat-label">Total Alerts</div>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        } else {
+          card.innerHTML = `
+            <div class="anomaly-summary">
+              <div class="anomaly-icon-wrap ok"><i class="bi bi-check-lg"></i></div>
+              <div class="anomaly-info">
+                <h3>All Clear — No Anomalies Detected</h3>
+                <p>Monitoring all transactions. No suspicious activity or duplicate collections have been found in the current distribution cycle.</p>
+                <div class="anomaly-stats">
+                  <div class="anomaly-stat">
+                    <div class="anomaly-stat-val safe">0</div>
+                    <div class="anomaly-stat-label">Fraud Flags</div>
+                  </div>
+                  <div class="anomaly-stat">
+                    <div class="anomaly-stat-val safe">0</div>
+                    <div class="anomaly-stat-label">Duplicates</div>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+        }
+      } catch (err) {
+        countEl.textContent = 'Unavailable';
+        card.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">ML analytics service not running</div></div>`;
+      }
+    }
+
+    // ── LOW STOCK ────────────────────────────────────────────────
     async function loadLowStock() {
       try {
-        const res       = await fetch('/stock/alerts');
-        const data      = await res.json();
+        const res  = await fetch('/stock/alerts', { credentials: 'include' });
+        const data = await res.json();
         const container = document.getElementById('lowStockCards');
-        const countEl   = document.getElementById('lowStockCount');
-        countEl.textContent = data.data.length + ' items';
-
+        document.getElementById('lowStockCount').textContent = data.data.length + ' items';
         if (data.data.length === 0) {
           container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">All stock levels are healthy</div></div>`;
           return;
         }
-
-        container.innerHTML = `<div class="alert-cards">${
-          data.data.map(item => {
-            const remaining = (item.total_quantity - item.distributed_quantity).toFixed(1);
-            const percent   = ((remaining / item.total_quantity) * 100).toFixed(0);
-            return `
-              <div class="alert-card orange">
-                <div class="alert-ico ico-orange"><i class="bi bi-box-seam"></i></div>
-                <div>
-                  <div class="alert-title">${item.item_name} — Low Stock</div>
-                  <div class="alert-detail">
-                    Remaining: <span>${remaining} ${item.unit}</span> (${percent}% left)<br/>
-                    Please collect your ration soon.
-                  </div>
-                </div>
-              </div>`;
-          }).join('')
-        }</div>`;
+        container.innerHTML = `<div class="alert-cards">${data.data.map(item => {
+          const remaining = (item.total_quantity - item.distributed_quantity).toFixed(1);
+          const percent   = ((remaining / item.total_quantity) * 100).toFixed(0);
+          return `<div class="alert-card orange">
+            <div class="alert-ico ico-orange"><i class="bi bi-box-seam"></i></div>
+            <div class="alert-body">
+              <div class="alert-title">${item.item_name}</div>
+              <div class="alert-detail">
+                Remaining: <span>${remaining} ${item.unit}</span> (${percent}% left)<br/>
+                Alert threshold: <span>${item.alert_threshold} ${item.unit}</span><br/>
+                Total stock: <span>${item.total_quantity} ${item.unit}</span>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}</div>`;
       } catch (err) { console.error('Low stock error:', err); }
     }
 
-    async function loadMyTransactions() {
+    // ── HIGH QUANTITY ────────────────────────────────────────────
+    async function loadHighAlerts() {
       try {
-        const res       = await fetch('/customer/my-transactions');
-        const data      = await res.json();
-        const container = document.getElementById('txCards');
-        const countEl   = document.getElementById('txCount');
-        countEl.textContent = data.data.length + ' transactions';
-
+        const res  = await fetch('/ration/high-alerts', { credentials: 'include' });
+        const data = await res.json();
+        const container = document.getElementById('highAlertCards');
+        document.getElementById('highAlertCount').textContent = data.data.length + ' alerts';
         if (data.data.length === 0) {
-          container.innerHTML = `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">No transactions yet</div></div>`;
+          container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No high quantity issues detected</div></div>`;
           return;
         }
-
-        container.innerHTML = `<div class="alert-cards">${
-          data.data.slice(0, 6).map(tx => `
-            <div class="alert-card green">
-              <div class="alert-ico ico-green"><i class="bi bi-bag-check"></i></div>
-              <div>
-                <div class="alert-title">${tx.item_name} — ${tx.quantity_issued} ${tx.unit}</div>
-                <div class="alert-detail">
-                  Issued by: <span>${tx.issued_by_name}</span><br/>
-                  Card: <span>${tx.ration_card_no}</span>
-                </div>
-                <div class="alert-time">${new Date(tx.issued_at).toLocaleString('en-IN')}</div>
+        container.innerHTML = `<div class="alert-cards">${data.data.map(a => `
+          <div class="alert-card red">
+            <div class="alert-ico ico-red"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="alert-body">
+              <div class="alert-title">${a.beneficiary_name}</div>
+              <div class="alert-detail">
+                Item: <span>${a.item_name}</span><br/>
+                Issued: <span>${a.quantity_issued} ${a.unit}</span> — Allowed: <span>${a.allowed_qty} ${a.unit}</span><br/>
+                Ration Card: <span>${a.ration_card_no}</span><br/>
+                Issued by: <span>${a.issued_by_name}</span>
               </div>
-            </div>`).join('')
-        }</div>`;
-      } catch (err) { console.error('TX error:', err); }
+              <div class="alert-time">${new Date(a.issued_at).toLocaleString('en-IN')}</div>
+            </div>
+          </div>`).join('')}</div>`;
+      } catch (err) { console.error('High alert error:', err); }
+    }
+
+    // ── SUSPICIOUS ACTIVITY (FRAUD) ──────────────────────────────
+    async function loadFraudAlerts() {
+      try {
+        const res  = await fetch('/ml/fraud-detect', { credentials: 'include' });
+        const data = await res.json();
+        const container = document.getElementById('fraudAlertCards');
+        if (data.success) {
+          document.getElementById('fraudAlertCount').textContent = data.data.total_flagged + ' alerts';
+          if (data.data.flagged.length === 0) {
+            container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No fraudulent activity detected</div></div>`;
+            return;
+          }
+          container.innerHTML = `<div class="alert-cards">${data.data.flagged.slice(0, 5).map(f => `
+            <div class="alert-card red">
+              <div class="alert-ico ico-red"><i class="bi bi-shield-exclamation"></i></div>
+              <div class="alert-body">
+                <div class="alert-title">${f.beneficiary_name}</div>
+                <div class="alert-detail">
+                  Item: <span>${f.item_name}</span><br/>
+                  Issued: <span>${f.quantity_issued} ${f.unit}</span> — Allowed: <span>${f.allowed_qty} ${f.unit}</span><br/>
+                  Card: <span>${f.ration_card_no}</span><br/>
+                  <strong>Flags:</strong> ${f.flag_reasons.join(', ')}
+                </div>
+                <div class="alert-time">${new Date(f.issued_at).toLocaleString('en-IN')}</div>
+              </div>
+            </div>`).join('')}</div>`;
+        } else {
+          container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service unavailable</div></div>`;
+        }
+      } catch (err) {
+        document.getElementById('fraudAlertCards').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service not running</div></div>`;
+      }
+    }
+
+    // ── DUPLICATE COLLECTIONS ────────────────────────────────────
+    async function loadDupAlerts() {
+      try {
+        const res  = await fetch('/ml/duplicate-detect', { credentials: 'include' });
+        const data = await res.json();
+        const container = document.getElementById('dupAlertCards');
+        if (data.success) {
+          document.getElementById('dupAlertCount').textContent = data.data.total_flagged + ' alerts';
+          if (data.data.duplicates.length === 0) {
+            container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-text">No duplicate collections detected</div></div>`;
+            return;
+          }
+          container.innerHTML = `<div class="alert-cards">${data.data.duplicates.slice(0, 5).map(d => `
+            <div class="alert-card purple">
+              <div class="alert-ico ico-purple"><i class="bi bi-people"></i></div>
+              <div class="alert-body">
+                <div class="alert-title">Possible Duplicate Collection</div>
+                <div class="alert-detail">
+                  <strong>Card 1:</strong> ${d.transaction_1.ration_card_no} (${d.transaction_1.beneficiary_name})<br/>
+                  <strong>Card 2:</strong> ${d.transaction_2.ration_card_no} (${d.transaction_2.beneficiary_name})<br/>
+                  Item: <span>${d.item_name}</span><br/>
+                  Similarity: <span>${Math.round(d.similarity_score * 100)}%</span><br/>
+                  <strong>Reasons:</strong> ${d.match_reasons.join(', ')}
+                </div>
+                <div class="alert-time">Risk Level: ${d.risk_level}</div>
+              </div>
+            </div>`).join('')}</div>`;
+        } else {
+          container.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service unavailable</div></div>`;
+        }
+      } catch (err) {
+        document.getElementById('dupAlertCards').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Analytics service not running</div></div>`;
+      }
     }
   </script>
-
 </body>
 </html>

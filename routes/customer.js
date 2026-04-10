@@ -14,25 +14,19 @@ router.get('/portal', (req, res) => {
   res.sendFile('customer-portal.html', { root: './public' });
 });
 
-// Customer login submit
+// Customer login
 router.post('/login', async (req, res) => {
   try {
     const { ration_card_no, password } = req.body;
 
     const customer = await customerModel.findByRationCard(ration_card_no);
     if (!customer) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid ration card number or password'
-      });
+      return res.status(401).json({ success: false, message: 'Invalid ration card number or password' });
     }
 
     const isMatch = await bcrypt.compare(password, customer.password);
     if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid ration card number or password'
-      });
+      return res.status(401).json({ success: false, message: 'Invalid ration card number or password' });
     }
 
     req.session.customer = {
@@ -57,29 +51,18 @@ router.post('/register', async (req, res) => {
     const { name, ration_card_no, phone, address, password, family_members } = req.body;
 
     if (!name || !ration_card_no || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Name, ration card number and password are required'
-      });
+      return res.status(400).json({ success: false, message: 'Name, ration card number and password are required' });
     }
 
     const existing = await customerModel.findByRationCard(ration_card_no);
     if (existing) {
-      return res.status(400).json({
-        success: false,
-        message: 'This ration card is already registered'
-      });
+      return res.status(400).json({ success: false, message: 'This ration card is already registered' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await customerModel.createCustomer(
-      name, ration_card_no, phone, address, hashedPassword, family_members || 1
-    );
+    await customerModel.createCustomer(name, ration_card_no, phone, address, hashedPassword, family_members || 1);
 
-    return res.json({
-      success: true,
-      message: 'Registration successful! You can now login.'
-    });
+    return res.json({ success: true, message: 'Registration successful! You can now login.' });
 
   } catch (error) {
     console.error('Customer register error:', error);
@@ -87,10 +70,17 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Get current customer session
+// GET /customer/me
+// Returns BOTH `customer` and `user` keys so all pages work without changes:
+//   - customer-portal.js reads data.customer
+//   - customer-alerts.html reads data.user
 router.get('/me', (req, res) => {
   if (req.session.customer) {
-    return res.json({ success: true, customer: req.session.customer });
+    return res.json({
+      success: true,
+      customer: req.session.customer,
+      user: req.session.customer
+    });
   }
   return res.status(401).json({ success: false, message: 'Not logged in' });
 });
@@ -101,9 +91,7 @@ router.get('/my-transactions', async (req, res) => {
     return res.status(401).json({ success: false, message: 'Not logged in' });
   }
   try {
-    const transactions = await rationModel.getByRationCard(
-      req.session.customer.ration_card_no
-    );
+    const transactions = await rationModel.getByRationCard(req.session.customer.ration_card_no);
     return res.json({ success: true, data: transactions });
   } catch (error) {
     console.error('Transactions error:', error);
@@ -137,7 +125,9 @@ router.get('/profile', async (req, res) => {
   try {
     const customer = await customerModel.findById(req.session.customer.id);
     res.json({ success: true, data: customer });
-  } catch (e) { res.status(500).json({ success: false }); }
+  } catch (e) {
+    res.status(500).json({ success: false });
+  }
 });
 
 // Update customer profile
@@ -150,7 +140,9 @@ router.post('/update-profile', async (req, res) => {
       [email, avatar_color, avatar_letter, language, notifications, req.session.customer.id]
     );
     res.json({ success: true, message: '✅ Profile updated successfully!' });
-  } catch (e) { res.status(500).json({ success: false, message: 'Server error' }); }
+  } catch (e) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Change customer password
@@ -159,12 +151,14 @@ router.post('/change-password', async (req, res) => {
   try {
     const { current_password, new_password } = req.body;
     const customer = await customerModel.findById(req.session.customer.id);
-    const isMatch  = await bcrypt.compare(current_password, customer.password);
+    const isMatch = await bcrypt.compare(current_password, customer.password);
     if (!isMatch) return res.status(400).json({ success: false, message: 'Current password is incorrect' });
     const hashed = await bcrypt.hash(new_password, 10);
     await db.execute('UPDATE customers SET password=? WHERE id=?', [hashed, req.session.customer.id]);
     res.json({ success: true, message: '✅ Password changed successfully!' });
-  } catch (e) { res.status(500).json({ success: false, message: 'Server error' }); }
+  } catch (e) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 module.exports = router;

@@ -13,10 +13,12 @@ load_dotenv()
 def get_connection():
     return pymysql.connect(
         host        = os.getenv('DB_HOST', 'localhost'),
+        port        = int(os.getenv('DB_PORT', 3306)),   # ✅ was missing — Railway uses 37430
         user        = os.getenv('DB_USER', 'root'),
         password    = os.getenv('DB_PASSWORD', ''),
         database    = os.getenv('DB_NAME', ''),
-        cursorclass = pymysql.cursors.DictCursor
+        cursorclass = pymysql.cursors.DictCursor,
+        connect_timeout = 10
     )
 
 def query_df(sql, params=None):

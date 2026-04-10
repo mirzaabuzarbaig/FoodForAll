@@ -10,63 +10,48 @@ const isLoggedIn = (req, res, next) => {
   return res.status(401).json({ success: false, message: 'Please login first' });
 };
 
+// ✅ Accepts both staff (req.session.user) and customers (req.session.customer)
+const isLoggedInAny = (req, res, next) => {
+  if (req.session.user || req.session.customer) return next();
+  return res.status(401).json({ success: false, message: 'Please login first' });
+};
+
 // Issue ration
 router.post('/issue', isLoggedIn, async (req, res) => {
   try {
-    const {
-      stock_id,
-      beneficiary_name,
-      ration_card_no,
-      quantity_issued,
-      family_members
-    } = req.body;
+    const { stock_id, beneficiary_name, ration_card_no, quantity_issued, family_members } = req.body;
 
     if (!stock_id || !beneficiary_name || !ration_card_no || !quantity_issued) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
-
     if (!family_members || family_members < 1) {
       return res.status(400).json({ success: false, message: 'Please enter number of family members' });
     }
 
-    // Get stock details
     const stock = await stockModel.getStockById(stock_id);
     if (!stock) {
       return res.status(404).json({ success: false, message: 'Stock item not found' });
     }
 
-    // Check available stock
     const remaining = stock.total_quantity - stock.distributed_quantity;
     if (parseFloat(quantity_issued) > parseFloat(remaining)) {
-      return res.status(400).json({
-        success: false,
-        message: `Only ${remaining} ${stock.unit} available in stock`
-      });
+      return res.status(400).json({ success: false, message: `Only ${remaining} ${stock.unit} available in stock` });
     }
 
-    // Calculate allowed quota using family members from request
     const allowed_qty = stock.per_person_quota * parseInt(family_members);
 
-    // Check quota only if per_person_quota is set
     if (stock.per_person_quota > 0) {
-
-      // Check already issued in current cycle
-      const already_issued = await rationModel.checkAlreadyIssued(
-        ration_card_no, stock_id, stock.current_cycle
-      );
-
+      const already_issued = await rationModel.checkAlreadyIssued(ration_card_no, stock_id, stock.current_cycle);
       const total_if_issued = parseFloat(already_issued) + parseFloat(quantity_issued);
 
       if (total_if_issued > allowed_qty) {
         const remaining_quota = (allowed_qty - parseFloat(already_issued)).toFixed(1);
-
         if (remaining_quota <= 0) {
           return res.status(400).json({
             success: false,
             message: `❌ Quota exceeded! This family already received their full quota of ${allowed_qty} ${stock.unit} for this cycle.`
           });
         }
-
         return res.status(400).json({
           success: false,
           message: `❌ Too much! ${family_members} members × ${stock.per_person_quota} ${stock.unit} = ${allowed_qty} ${stock.unit} allowed. Only ${remaining_quota} ${stock.unit} remaining in their quota.`
@@ -74,28 +59,14 @@ router.post('/issue', isLoggedIn, async (req, res) => {
       }
     }
 
-    // All checks passed — issue ration
-    await rationModel.issueRation(
-      stock_id,
-      beneficiary_name,
-      ration_card_no,
-      quantity_issued,
-      req.session.user.id,
-      stock.current_cycle
-    );
+    await rationModel.issueRation(stock_id, beneficiary_name, ration_card_no, quantity_issued, req.session.user.id, stock.current_cycle);
 
-    // Update customer family members if they exist in customers table
     const customer = await customerModel.findByRationCard(ration_card_no);
     if (customer) {
-      await db.execute(
-        'UPDATE customers SET family_members = ? WHERE ration_card_no = ?',
-        [family_members, ration_card_no]
-      );
+      await db.execute('UPDATE customers SET family_members = ? WHERE ration_card_no = ?', [family_members, ration_card_no]);
     }
 
-    // Reduce stock
     await stockModel.reduceStock(stock_id, quantity_issued);
-
     return res.json({ success: true, message: '✅ Ration issued successfully!' });
 
   } catch (error) {
@@ -126,8 +97,8 @@ router.get('/search/:card', isLoggedIn, async (req, res) => {
   }
 });
 
-// Get high quantity alerts
-router.get('/high-alerts', isLoggedIn, async (req, res) => {
+// ✅ GET /ration/high-alerts — open to both staff and customers
+router.get('/high-alerts', isLoggedInAny, async (req, res) => {
   try {
     const alerts = await rationModel.getHighQuantityAlerts();
     res.json({ success: true, data: alerts });
@@ -144,10 +115,7 @@ router.post('/reset-cycle/:id', isLoggedIn, async (req, res) => {
       return res.status(403).json({ success: false, message: 'Admin only' });
     }
     await stockModel.resetCycle(req.params.id);
-    res.json({
-      success: true,
-      message: '✅ Cycle reset! Customers can now receive ration again.'
-    });
+    res.json({ success: true, message: '✅ Cycle reset! Customers can now receive ration again.' });
   } catch (error) {
     console.error('Reset cycle error:', error);
     res.status(500).json({ success: false, message: 'Server error' });

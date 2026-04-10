@@ -12,6 +12,12 @@ const isAdmin = (req, res, next) => {
   return res.status(403).json({ success: false, message: 'Admin access only' });
 };
 
+// ✅ Accepts both staff (req.session.user) and customers (req.session.customer)
+const isLoggedInAny = (req, res, next) => {
+  if (req.session.user || req.session.customer) return next();
+  return res.status(401).json({ success: false, message: 'Please login first' });
+};
+
 // Get all stock
 router.get('/', isLoggedIn, async (req, res) => {
   try {
@@ -26,28 +32,12 @@ router.get('/', isLoggedIn, async (req, res) => {
 // Add new stock item (admin only)
 router.post('/add', isAdmin, async (req, res) => {
   try {
-    const {
-      item_name,
-      total_quantity,
-      unit,
-      alert_threshold,
-      per_person_quota
-    } = req.body;
-
+    const { item_name, total_quantity, unit, alert_threshold, per_person_quota } = req.body;
     if (!item_name || !total_quantity || !unit) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
-
-    await stockModel.addStock(
-      item_name,
-      total_quantity,
-      unit,
-      alert_threshold  || 10,
-      per_person_quota || 0
-    );
-
+    await stockModel.addStock(item_name, total_quantity, unit, alert_threshold || 10, per_person_quota || 0);
     res.json({ success: true, message: 'Stock added successfully' });
-
   } catch (error) {
     console.error('Add stock error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
@@ -66,8 +56,8 @@ router.post('/update/:id', isAdmin, async (req, res) => {
   }
 });
 
-// Get low stock alerts
-router.get('/alerts', isLoggedIn, async (req, res) => {
+// ✅ GET /stock/alerts — open to both staff and customers
+router.get('/alerts', isLoggedInAny, async (req, res) => {
   try {
     const lowStock = await stockModel.getLowStock();
     res.json({ success: true, data: lowStock });
@@ -76,6 +66,7 @@ router.get('/alerts', isLoggedIn, async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
 // Delete stock item (admin only)
 router.delete('/delete/:id', isAdmin, async (req, res) => {
   try {
@@ -86,4 +77,5 @@ router.delete('/delete/:id', isAdmin, async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
 module.exports = router;
