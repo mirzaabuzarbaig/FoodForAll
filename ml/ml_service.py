@@ -9,9 +9,11 @@ Run:
   python ml_service.py
 """
 
+import os
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
+
 
 load_dotenv()
 

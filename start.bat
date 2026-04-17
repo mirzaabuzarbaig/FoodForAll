@@ -8,7 +8,7 @@ start "Node.js Server" cmd /k "cd /d %~dp0 && npm install && node server.js"
 echo.
 echo Starting Python ML Service...
 timeout /t 3 /nobreak > nul
-start "ML Service" cmd /k "cd /d %~dp0 && pip install -r ml/requirements.txt && python ml_services.py"
+start "ML Service" cmd /k "cd /d %~dp0 && pip install -r ml/requirements.txt && python -m ml.ml_services"
 
 echo.
 echo Both servers are starting...
