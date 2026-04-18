@@ -28,11 +28,11 @@ const sessionStore = new MySQLStore({
   database: process.env.DB_NAME,
   clearExpired: true,
   checkExpirationInterval: 900000,
-  createDatabaseTable: true    // ← auto-creates sessions table if missing
+  createDatabaseTable: true
 });
 
 sessionStore.on('error', (err) => {
-  console.error('Session store error:', err); // ← logs any DB errors
+  console.error('Session store error:', err);
 });
 
 // Session
@@ -44,7 +44,7 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     secure: true,
-    sameSite: 'none'   // ← fixed: lax blocks cookies on Vercel
+    sameSite: 'none'
   }
 }));
 
@@ -94,12 +94,25 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Debug session route — remove after fix
+// ── Debug routes — remove after fix ──────────────────────────
 app.get('/debug-session', (req, res) => {
   res.json({
     sessionID: req.sessionID,
     user: req.session.user || null,
     cookie: req.session.cookie
+  });
+});
+
+app.post('/debug-login', (req, res) => {
+  req.session.regenerate((err) => {
+    if (err) return res.json({ step: 'regenerate failed', error: err.message });
+
+    req.session.user = { id: 1, name: 'Test', role: 'admin' };
+
+    req.session.save((saveErr) => {
+      if (saveErr) return res.json({ step: 'save failed', error: saveErr.message });
+      res.json({ step: 'success', sessionID: req.sessionID, user: req.session.user });
+    });
   });
 });
 
