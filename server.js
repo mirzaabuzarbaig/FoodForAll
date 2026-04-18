@@ -25,7 +25,14 @@ const sessionStore = new MySQLStore({
   port:     Number(process.env.DB_PORT),
   user:     process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  database: process.env.DB_NAME,
+  clearExpired: true,
+  checkExpirationInterval: 900000,
+  createDatabaseTable: true    // ← auto-creates sessions table if missing
+});
+
+sessionStore.on('error', (err) => {
+  console.error('Session store error:', err); // ← logs any DB errors
 });
 
 // Session
@@ -37,7 +44,7 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     secure: true,
-    sameSite: 'lax'
+    sameSite: 'none'   // ← fixed: lax blocks cookies on Vercel
   }
 }));
 
@@ -85,6 +92,15 @@ app.use('/api/ml', (req, res) => {
 // Root route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Debug session route — remove after fix
+app.get('/debug-session', (req, res) => {
+  res.json({
+    sessionID: req.sessionID,
+    user: req.session.user || null,
+    cookie: req.session.cookie
+  });
 });
 
 // Start server
