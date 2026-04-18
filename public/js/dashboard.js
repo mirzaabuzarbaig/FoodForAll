@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
-  checkAuth();
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuth();
   loadDashboard();
   loadAlerts();
   loadDemand();
@@ -14,17 +14,17 @@ async function checkAuth() {
   const data = await res.json();
   if (!data.success) {
     window.location.href = '/';
-  } else {
-    const el = document.getElementById('sidebarUser');
-    if (el) el.textContent = data.user.name;
+    return;
   }
+  const el = document.getElementById('sidebarUser');
+  if (el) el.textContent = data.user.name;
 }
 
 async function loadDashboard() {
   try {
     const res = await fetch('/dashboard/stats');
     const data = await res.json();
-    if (!data.success) { window.location.href = '/'; return; }
+    if (!data.success) return;  // ← removed redirect, just return
 
     const { summary, recentTransactions } = data.data;
 
@@ -99,7 +99,6 @@ async function loadDemand() {
   const container = document.getElementById('demandCards');
   container.innerHTML = '<div class="loading-message">Analyzing data...</div>';
   try {
-    // Calls Flask ML service via Node proxy at /api/ml/demand-forecast
     const res = await fetch('/api/ml/demand-forecast');
     const data = await res.json();
 
@@ -124,18 +123,16 @@ async function loadDemand() {
     }
   } catch (err) {
     console.error('Demand forecast error:', err);
-    container.innerHTML = '<div class="empty-state">ML service not reachable — make sure Python service is running on port 5001</div>';
+    container.innerHTML = '<div class="empty-state">ML service not reachable</div>';
   }
 }
 
-// helper used in loadDemand
 function decreas(s) { return s.includes('decreas'); }
 
 async function loadAnomalyAlerts() {
   const summary = document.getElementById('anomalyAlertsSummary');
   summary.innerHTML = '<div class="loading-message">Processing insights...</div>';
   try {
-    // Calls Flask ML service via Node proxy at /api/ml/...
     const [fraudRes, dupRes] = await Promise.all([
       fetch('/api/ml/fraud-detect'),
       fetch('/api/ml/duplicate-detect')
@@ -171,6 +168,6 @@ async function loadAnomalyAlerts() {
     }
   } catch (err) {
     console.error('Anomaly detection error:', err);
-    summary.innerHTML = '<div class="empty-state">ML service not reachable — make sure Python service is running on port 5001</div>';
+    summary.innerHTML = '<div class="empty-state">ML service not reachable</div>';
   }
 }
