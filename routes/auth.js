@@ -14,33 +14,38 @@ router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Check if user exists
     const user = await userModel.findByUsername(username);
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid username or password' });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid username or password' });
     }
 
-    // Save user in session
-
-    req.session.user = {
-      id: user.id,
-      name: user.name,
-      username: user.username,
-      role: user.role
-    };
-
-    req.session.save((err) => {
+    // Regenerate session first, then save user
+    req.session.regenerate((err) => {
       if (err) {
-        console.error('Session save error:', err);
+        console.error('Session regenerate error:', err);
         return res.status(500).json({ success: false, message: 'Session error' });
       }
-      return res.json({ success: true, role: user.role });
+
+      req.session.user = {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        role: user.role
+      };
+
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ success: false, message: 'Session save error' });
+        }
+        console.log('Session saved successfully:', req.session.user);
+        return res.json({ success: true, role: user.role });
+      });
     });
 
   } catch (error) {
@@ -62,6 +67,7 @@ router.get('/me', (req, res) => {
   }
   return res.status(401).json({ success: false, message: 'Not logged in' });
 });
+
 // Get admin profile
 router.get('/profile', async (req, res) => {
   if (!req.session.user) return res.status(401).json({ success: false });
@@ -98,4 +104,5 @@ router.post('/change-password', async (req, res) => {
     res.json({ success: true, message: '✅ Password changed successfully!' });
   } catch (e) { res.status(500).json({ success: false, message: 'Server error' }); }
 });
+
 module.exports = router;
