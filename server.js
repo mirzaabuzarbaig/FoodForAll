@@ -14,6 +14,9 @@ const mlRoutes        = require('./routes/mlRoutes');
 
 const app = express();
 
+// Trust Vercel's proxy — required for secure cookies to work
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,10 +44,12 @@ app.use(session({
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
+  name: 'pds.sid',
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     secure: true,
-    sameSite: 'none'
+    sameSite: 'none',
+    httpOnly: true
   }
 }));
 
