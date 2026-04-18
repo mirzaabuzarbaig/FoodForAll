@@ -3,6 +3,7 @@ const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 const http = require('http');
+const https = require('https');
 require('dotenv').config();
 
 const authRoutes      = require('./routes/auth');
@@ -61,22 +62,23 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/customer',  customerRoutes);
 app.use('/ml',        mlRoutes);
 
-// ── /api/ml/* proxy → Flask (Koyeb) ──────────────────────────
+// ── /api/ml/* proxy → Flask (Render) ─────────────────────────
 app.use('/api/ml', (req, res) => {
   const ML_HOST = process.env.ML_SERVICE_URL || 'http://localhost:5001';
   const target  = `${ML_HOST}/api/ml${req.url}`;
+  const urlObj  = new URL(target);
 
-  const urlObj = new URL(target);
+  const transport = urlObj.protocol === 'https:' ? https : http;
 
   const options = {
     hostname: urlObj.hostname,
-    port:     urlObj.port || 443,
+    port:     urlObj.port || (urlObj.protocol === 'https:' ? 443 : 5001),
     path:     urlObj.pathname + (urlObj.search || ''),
     method:   req.method,
     headers:  { 'Content-Type': 'application/json' }
   };
 
-  const proxyReq = http.request(options, (proxyRes) => {
+  const proxyReq = transport.request(options, (proxyRes) => {
     res.status(proxyRes.statusCode);
     res.setHeader('Content-Type', 'application/json');
     proxyRes.pipe(res);
@@ -97,28 +99,6 @@ app.use('/api/ml', (req, res) => {
 // Root route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// ── Debug routes — remove after fix ──────────────────────────
-app.get('/debug-session', (req, res) => {
-  res.json({
-    sessionID: req.sessionID,
-    user: req.session.user || null,
-    cookie: req.session.cookie
-  });
-});
-
-app.post('/debug-login', (req, res) => {
-  req.session.regenerate((err) => {
-    if (err) return res.json({ step: 'regenerate failed', error: err.message });
-
-    req.session.user = { id: 1, name: 'Test', role: 'admin' };
-
-    req.session.save((saveErr) => {
-      if (saveErr) return res.json({ step: 'save failed', error: saveErr.message });
-      res.json({ step: 'success', sessionID: req.sessionID, user: req.session.user });
-    });
-  });
 });
 
 // Start server
