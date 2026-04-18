@@ -27,6 +27,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Save user in session
+
     req.session.user = {
       id: user.id,
       name: user.name,
@@ -34,7 +35,13 @@ router.post('/login', async (req, res) => {
       role: user.role
     };
 
-    return res.json({ success: true, role: user.role });
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ success: false, message: 'Session error' });
+      }
+      return res.json({ success: true, role: user.role });
+    });
 
   } catch (error) {
     console.error('Login error:', error);
